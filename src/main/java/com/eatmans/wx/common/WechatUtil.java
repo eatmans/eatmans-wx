@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.shiro.codec.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -20,14 +21,17 @@ import java.util.Map;
  * @date 2021/7/5
  */
 public class WechatUtil {
-    public static JSONObject getSessionKeyOrOpenId(String code) {
+
+    public static JSONObject getSessionKeyOrOpenId(String appID, String secret, String code) {
         String requestUrl = "https://api.weixin.qq.com/sns/jscode2session";
         Map<String, String> requestUrlParam = new HashMap<>();
         // https://mp.weixin.qq.com/wxopen/devprofile?action=get_profile&token=164113089&lang=zh_CN
         //小程序appId
-        requestUrlParam.put("appid", "wx98bd4a935aea8f5e");
+
+
+        requestUrlParam.put("appid", appID);
         //小程序secret
-        requestUrlParam.put("secret", "86850ed2543f11ad636b5781a25aa97f");
+        requestUrlParam.put("secret", secret);
         //小程序端返回的code
         requestUrlParam.put("js_code", code);
         //默认参数

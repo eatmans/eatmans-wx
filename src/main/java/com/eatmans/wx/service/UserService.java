@@ -6,4 +6,6 @@ package com.eatmans.wx.service;
  * @date 2021/7/5
  */
 public interface UserService {
+
+
 }

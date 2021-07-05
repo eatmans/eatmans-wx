@@ -7,6 +7,7 @@ import com.eatmans.wx.common.WechatUtil;
 import com.eatmans.wx.domain.User;
 import com.eatmans.wx.mapper.UserMapper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,12 @@ import java.util.UUID;
 @Controller
 public class UserController {
 
+    @Value(value = "${WXMiniApp.appID}")
+    private String appID;
+
+    @Value(value = "${WXMiniApp.secret}")
+    private String secret;
+
     @Resource
     private UserMapper userMapper;
 
@@ -39,15 +46,17 @@ public class UserController {
                                    @RequestParam(value = "iv", required = false) String iv) {
         // 用户非敏感信息：rawData
         // 签名：signature
+
         JSONObject rawDataJson = JSON.parseObject(rawData);
         // 1.接收小程序发送的code
         // 2.开发者服务器 登录凭证校验接口 appi + appsecret + code
 //        System.out.println(code);
-        JSONObject SessionKeyOpenId = WechatUtil.getSessionKeyOrOpenId(code);
+
+        JSONObject SessionKeyOpenId = WechatUtil.getSessionKeyOrOpenId(appID, secret, code);
         // 3.接收微信接口服务 获取返回的参数
         String openid = SessionKeyOpenId.getString("openid");
         String sessionKey = SessionKeyOpenId.getString("session_key");
-        System.out.println(openid);
+
         // 4.校验签名 小程序发送的签名signature与服务器端生成的签名signature2 = sha1(rawData + sessionKey)
         String signature2 = DigestUtils.sha1Hex(rawData + sessionKey);
         if (!signature.equals(signature2)) {
